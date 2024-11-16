@@ -63,6 +63,25 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+# class VAEMixin:
+#     """Universal variational auto-encoder (VAE) methods."""
+
+#         return -compute_elbo(self.module, dataloader, return_mean=return_mean, **kwargs)
+
+#     @torch.inference_mode()
+#     @unsupported_if_adata_minified
+#     def get_marginal_ll(
+#             return torch.cat(log_likelihoods, dim=0)
+
+#     @torch.inference_mode()
+#     @unsupported_if_adata_minified
+#     def get_reconstruction_error(
+#         )
+
+#     @torch.inference_mode()
+#     def get_latent_representation(
+#             return torch.cat(zs).numpy()
+            
 # #RNASeqMixin
 # Purpose: Adds tools specific to RNA-seq data, focusing on preprocessing, inference, and interpretation.
 # What TotalVI inherits:
@@ -74,7 +93,22 @@ logger = logging.getLogger(__name__)
     # def differential_expression(
     #     return result
 #de_results = self.differential_expression(groupby="cluster", group1="typeA", group2="typeB")
+#inherints functions from other classes like 
+#RNASeqMixin: _get_importance_weights( get_normalized_expression differential_expression( posterior_predictive_sample( 
+#_get_denoised_samples(get_feature_correlation_matrix( def get_likelihood_parameters(def get_likelihood_parameters(
+ VAEMixin:
+    """Universal variational auto-encoder (VAE) methods."""
+get_elbo(  """Compute the evidence lower bound (ELBO) on the data.
+  The ELBO is the reconstruction error plus the Kullback-Leibler (KL) divergences between the
+        variational distributions and the priors. 
+       def get_marginal_ll(
+        self,
+              """Compute the marginal log-likehood of the data.
+     def get_reconstruction_error get_latent_representation( z_n`.
 
+class ArchesMixin:
+    """Universal scArches implementation."""
+    
 class TOTALVI(RNASeqMixin, VAEMixin, ArchesMixin, BaseModelClass):
     """total Variational Inference :cite:p:`GayosoSteier21`.
 
