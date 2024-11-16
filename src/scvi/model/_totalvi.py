@@ -96,19 +96,23 @@ logger = logging.getLogger(__name__)
 #inherints functions from other classes like 
 #RNASeqMixin: _get_importance_weights( get_normalized_expression differential_expression( posterior_predictive_sample( 
 #_get_denoised_samples(get_feature_correlation_matrix( def get_likelihood_parameters(def get_likelihood_parameters(
- VAEMixin:
-    """Universal variational auto-encoder (VAE) methods."""
-get_elbo(  """Compute the evidence lower bound (ELBO) on the data.
-  The ELBO is the reconstruction error plus the Kullback-Leibler (KL) divergences between the
-        variational distributions and the priors. 
-       def get_marginal_ll(
-        self,
-              """Compute the marginal log-likehood of the data.
-     def get_reconstruction_error get_latent_representation( z_n`.
+# VAEMixin:
+ #   """Universal variational auto-encoder (VAE) methods."""
+#get_elbo(  """Compute the evidence lower bound (ELBO) on the data.
+#  The ELBO is the reconstruction error plus the Kullback-Leibler (KL) divergences between the
+ #       variational distributions and the priors. 
+     #  def get_marginal_ll(
+   #     self,
+  #            """Compute the marginal log-likehood of the data.
+ #    def get_reconstruction_error get_latent_representation( z_n`.
 
 class ArchesMixin:
     """Universal scArches implementation."""
-    
+#The BaseModelClass is an abstract model in SCVI-tools that provides core functionalities for data management, training workflows, and inference, serving as a foundation for specialized models like TotalVI.
+#The BaseModelClass includes functions for data management (e.g., get_anndata_manager, register_manager), training (train), inference and analysis (e.g., get_latent_library_size, get_normalized_expression, differential_expression), utility (to_device), and saving/loading models (save, load).
+
+
+
 class TOTALVI(RNASeqMixin, VAEMixin, ArchesMixin, BaseModelClass):
     """total Variational Inference :cite:p:`GayosoSteier21`.
 
@@ -188,17 +192,22 @@ class TOTALVI(RNASeqMixin, VAEMixin, ArchesMixin, BaseModelClass):
         override_missing_proteins: bool = False,
         **model_kwargs,
     ):
-#         super().__init__(adata)
+    
+#init1:Inheritance and Initial Setup
+         super().__init__(adata)
 # TOTALVI inherits from multiple classes (RNASeqMixin, VAEMixin, ArchesMixin, and 
 #BaseModelClass), which themselves inherit functionality from their parent classes.
 # By calling super().__init__(adata), you ensure that all the initialization logic defined in
 #these parent classes is executed. For example, data registration or other setup tasks might 
 #happen in BaseModelClass (or one of the mixins).
+#Integrates with the parent classes 
 
         self.protein_state_registry = self.adata_manager.get_state_registry(
             REGISTRY_KEYS.PROTEIN_EXP_KEY
         )
-        if (
+# ensures access to the data registry for protein expression.
+#init2:handling missing proteins
+   if (
             fields.ProteinObsmField.PROTEIN_BATCH_MASK in self.protein_state_registry
             and not override_missing_proteins
         ):
@@ -215,7 +224,10 @@ class TOTALVI(RNASeqMixin, VAEMixin, ArchesMixin, BaseModelClass):
         else:
             batch_mask = None
             self._use_adversarial_classifier = False
-
+#Manages the presence or absence of protein data across batches
+#and sets up related configurations.
+#deciding whether adversarial classifiers are needed for handling batch effects.
+#init3:setting up priors
         emp_prior = (
             empirical_protein_background_prior
             if empirical_protein_background_prior is not None
@@ -225,6 +237,8 @@ class TOTALVI(RNASeqMixin, VAEMixin, ArchesMixin, BaseModelClass):
             prior_mean, prior_scale = self._get_totalvi_protein_priors(adata)
         else:
             prior_mean, prior_scale = None, None
+#Configures priors for protein background based on user input or empirical methods.
+#init4:Batch and Covariate Configuration
 
         n_cats_per_cov = (
             self.adata_manager.get_state_registry(REGISTRY_KEYS.CAT_COVS_KEY)[
@@ -239,7 +253,8 @@ class TOTALVI(RNASeqMixin, VAEMixin, ArchesMixin, BaseModelClass):
         library_log_means, library_log_vars = None, None
         if not use_size_factor_key:
             library_log_means, library_log_vars = _init_library_size(self.adata_manager, n_batch)
-
+##init5:Role: module instantiatio 
+#Instantiates the TOTALVAE module with user-defined parameters, integrating data properties like genes, proteins, and covariates.
         self.module = self._module_cls(
             n_input_genes=self.summary_stats.n_vars,
             n_input_proteins=self.summary_stats.n_proteins,
@@ -259,13 +274,14 @@ class TOTALVI(RNASeqMixin, VAEMixin, ArchesMixin, BaseModelClass):
             library_log_vars=library_log_vars,
             **model_kwargs,
         )
+#init6: Model Summary and Parameter Recording
         self._model_summary_string = (
             f"TotalVI Model with the following params: \nn_latent: {n_latent}, "
             f"gene_dispersion: {gene_dispersion}, protein_dispersion: {protein_dispersion}, "
             f"gene_likelihood: {gene_likelihood}, latent_distribution: {latent_distribution}"
         )
         self.init_params_ = self._get_init_params(locals())
-
+#Records the model configuration and initialization parameters
     @devices_dsp.dedent
     def train(
         self,
