@@ -1,3 +1,27 @@
+#THis file has 13 functions 1 class + 12 functions
+#Data management: 3 functions  Training: 1 function  Inference and analysis: 6 functions Utility: 1 function
+# Functions:
+# # __init__
+# Initializes the TOTALVI model 
+# with parameters like latent dimensions, dispersion, and likelihood. (Pretraining)////////
+# # setup_anndata
+# Prepares an AnnData object for use with TOTALVI, 
+# registering necessary fields like batch keys and protein expressions. (Pretraining)
+# setup_mudata
+# train
+#  Handles model training with 
+# data splitting, training plans, and optimization using the TrainRunner. (During Training)
+# _validate_anndata
+# all the following are (Posttraining)
+# get_latent_representation
+# get_normalized_expression
+# posterior_predictive_sample
+# get_protein_foreground_probability
+# get_feature_correlation_matrix
+# differential_expression
+
+# _get_totalvi_protein_priors
+#the model lass with is instantiated by the user
 from __future__ import annotations
 
 import logging
@@ -39,6 +63,17 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+# #RNASeqMixin
+# Purpose: Adds tools specific to RNA-seq data, focusing on preprocessing, inference, and interpretation.
+# What TotalVI inherits:
+# Gene-specific operations: Includes methods for extracting gene-gene correlation matrices (get_feature_correlation_matrix) and differential expression analysis (differential_expression).
+# Posterior predictive sampling: Allows generating new data samples using posterior distributions (posterior_predictive_sample).
+# Importance weights: Computes importance weights for latent variable optimization (_get_importance_weights).
+#Examples used in TotalVI:
+
+    # def differential_expression(
+    #     return result
+#de_results = self.differential_expression(groupby="cluster", group1="typeA", group2="typeB")
 
 class TOTALVI(RNASeqMixin, VAEMixin, ArchesMixin, BaseModelClass):
     """total Variational Inference :cite:p:`GayosoSteier21`.
@@ -100,8 +135,9 @@ class TOTALVI(RNASeqMixin, VAEMixin, ArchesMixin, BaseModelClass):
     2. :doc:`/tutorials/notebooks/multimodal/cite_scrna_integration_w_totalVI`
     3. :doc:`/tutorials/notebooks/scrna/scarches_scvi_tools`
     """
-
-    _module_cls = TOTALVAE
+#References to the VAE, data splitter used here 
+#To change the module we just change it here instead of changning the whole code (modulariry)
+    _module_cls = TOTALVAE 
     _data_splitter_cls = DataSplitter
     _training_plan_cls = AdversarialTrainingPlan
     _train_runner_cls = TrainRunner
@@ -118,7 +154,13 @@ class TOTALVI(RNASeqMixin, VAEMixin, ArchesMixin, BaseModelClass):
         override_missing_proteins: bool = False,
         **model_kwargs,
     ):
-        super().__init__(adata)
+#         super().__init__(adata)
+# TOTALVI inherits from multiple classes (RNASeqMixin, VAEMixin, ArchesMixin, and 
+#BaseModelClass), which themselves inherit functionality from their parent classes.
+# By calling super().__init__(adata), you ensure that all the initialization logic defined in
+#these parent classes is executed. For example, data registration or other setup tasks might 
+#happen in BaseModelClass (or one of the mixins).
+
         self.protein_state_registry = self.adata_manager.get_state_registry(
             REGISTRY_KEYS.PROTEIN_EXP_KEY
         )
