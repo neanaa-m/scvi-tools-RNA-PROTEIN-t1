@@ -178,6 +178,11 @@ class TOTALVI(RNASeqMixin, VAEMixin, ArchesMixin, BaseModelClass):
     _module_cls = TOTALVAE 
     _data_splitter_cls = DataSplitter
     _training_plan_cls = AdversarialTrainingPlan
+    #adversarial training plan is used by totalVI to mix RNA and protein
+    #in the latent space but scVI uses 
+    #the basic training plan (defined in the inherited modeule along with train function)
+    #This basically a crucial part of our novelty right the training plan
+    #does mixing and predicting both modalities has a trade-off in protein prediction
     _train_runner_cls = TrainRunner
 
     def __init__(
