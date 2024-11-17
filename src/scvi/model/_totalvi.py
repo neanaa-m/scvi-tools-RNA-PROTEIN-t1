@@ -106,8 +106,8 @@ logger = logging.getLogger(__name__)
   #            """Compute the marginal log-likehood of the data.
  #    def get_reconstruction_error get_latent_representation( z_n`.
 
-class ArchesMixin:
-    """Universal scArches implementation."""
+#class ArchesMixin:
+    #"""Universal scArches implementation."""
 #The BaseModelClass is an abstract model in SCVI-tools that provides core functionalities for data management, training workflows, and inference, serving as a foundation for specialized models like TotalVI.
 #The BaseModelClass includes functions for data management (e.g., get_anndata_manager, register_manager), training (train), inference and analysis (e.g., get_latent_library_size, get_normalized_expression, differential_expression), utility (to_device), and saving/loading models (save, load).
 
