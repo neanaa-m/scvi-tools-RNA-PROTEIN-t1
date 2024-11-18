@@ -237,8 +237,10 @@ class confirmationthattheseareenough(RNASeqMixin, VAEMixin, ArchesMixin, BaseMod
     #notes of How totalVI module looked like vs model
     #1- does it give the same required paraters
     #in order as the module requires?
-    #2- are the parameters of model identical 
-    # to those of module? 
+    #some inputs are skipped but these inputs also do have 
+    #defaults.
+    #2- the data seems to not passed to module here
+    #How is the data passed to module?
 
         
         self._model_summary_string = (
