@@ -186,6 +186,17 @@ class confirmationthattheseareenough(RNASeqMixin, VAEMixin, ArchesMixin, BaseMod
             **model_kwargs,
         )
         # how you instantiate your module? 
+        #Here we need to make sure that 
+        #1 our module is using things we already have here
+        #2 we are insitaiting module as it requires
+        # references:
+        #A)
+        #How totalVI model runs module (above)
+        #How totalVI module looked like
+        #B)
+        #how my VI module looks like 
+        #(does all what it takes already here?)
+        
         self._model_summary_string = (
             f"TotalVI Model with the following params: \nn_latent: {n_latent}, "
             f"gene_dispersion: {gene_dispersion}, protein_dispersion: {protein_dispersion}, "
