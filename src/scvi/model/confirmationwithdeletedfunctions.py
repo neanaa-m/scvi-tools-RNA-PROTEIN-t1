@@ -196,6 +196,47 @@ class confirmationthattheseareenough(RNASeqMixin, VAEMixin, ArchesMixin, BaseMod
         #B)
         #how my VI module looks like 
         #(does all what it takes already here?)
+    #A)
+        #How totalVI model runs module (above)
+        #How totalVI module looked like
+    #begging of How totalVI module looked like
+    def __init__(
+        self,
+        n_input_genes: int,
+        n_input_proteins: int,
+        n_batch: int = 0,
+        n_labels: int = 0,
+        n_hidden: int = 256,
+        n_latent: int = 20,
+        n_layers_encoder: int = 2,
+        n_layers_decoder: int = 1,
+        n_continuous_cov: int = 0,
+        n_cats_per_cov: Iterable[int] | None = None,
+        dropout_rate_decoder: float = 0.2,
+        dropout_rate_encoder: float = 0.2,
+        gene_dispersion: Literal["gene", "gene-batch", "gene-label"] = "gene",
+        protein_dispersion: Literal["protein", "protein-batch", "protein-label"] = "protein",
+        log_variational: bool = True,
+        gene_likelihood: Literal["zinb", "nb"] = "nb",
+        latent_distribution: Literal["normal", "ln"] = "normal",
+        protein_batch_mask: dict[str | int, np.ndarray] = None,
+        encode_covariates: bool = True,
+        protein_background_prior_mean: np.ndarray | None = None,
+        protein_background_prior_scale: np.ndarray | None = None,
+        use_size_factor_key: bool = False,
+        use_observed_lib_size: bool = True,
+        library_log_means: np.ndarray | None = None,
+        library_log_vars: np.ndarray | None = None,
+        use_batch_norm: Literal["encoder", "decoder", "none", "both"] = "both",
+        use_layer_norm: Literal["encoder", "decoder", "none", "both"] = "none",
+        extra_encoder_kwargs: dict | None = None,
+        extra_decoder_kwargs: dict | None = None,
+    ):
+        super().__init__()
+    #end of How totalVI module looked like
+    #notes of How totalVI module looked like vs model
+
+
         
         self._model_summary_string = (
             f"TotalVI Model with the following params: \nn_latent: {n_latent}, "
