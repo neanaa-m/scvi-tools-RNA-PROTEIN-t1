@@ -205,37 +205,40 @@ class confirmationthattheseareenough(RNASeqMixin, VAEMixin, ArchesMixin, BaseMod
         n_input_genes: int,
         n_input_proteins: int,
         n_batch: int = 0,
-        n_labels: int = 0,
-        n_hidden: int = 256,
+        n_labels: int = 0, #skipped 
+        n_hidden: int = 256, #skipped
         n_latent: int = 20,
-        n_layers_encoder: int = 2,
-        n_layers_decoder: int = 1,
+        n_layers_encoder: int = 2,#skipped
+        n_layers_decoder: int = 1,#skipped
         n_continuous_cov: int = 0,
         n_cats_per_cov: Iterable[int] | None = None,
-        dropout_rate_decoder: float = 0.2,
-        dropout_rate_encoder: float = 0.2,
+        dropout_rate_decoder: float = 0.2,#skipped
+        dropout_rate_encoder: float = 0.2,#skipped
         gene_dispersion: Literal["gene", "gene-batch", "gene-label"] = "gene",
         protein_dispersion: Literal["protein", "protein-batch", "protein-label"] = "protein",
-        log_variational: bool = True,
+        log_variational: bool = True,#skipped
         gene_likelihood: Literal["zinb", "nb"] = "nb",
         latent_distribution: Literal["normal", "ln"] = "normal",
         protein_batch_mask: dict[str | int, np.ndarray] = None,
-        encode_covariates: bool = True,
+        encode_covariates: bool = True,#skipped
         protein_background_prior_mean: np.ndarray | None = None,
         protein_background_prior_scale: np.ndarray | None = None,
         use_size_factor_key: bool = False,
-        use_observed_lib_size: bool = True,
+        use_observed_lib_size: bool = True,#skipped
         library_log_means: np.ndarray | None = None,
         library_log_vars: np.ndarray | None = None,
-        use_batch_norm: Literal["encoder", "decoder", "none", "both"] = "both",
-        use_layer_norm: Literal["encoder", "decoder", "none", "both"] = "none",
-        extra_encoder_kwargs: dict | None = None,
-        extra_decoder_kwargs: dict | None = None,
+        use_batch_norm: Literal["encoder", "decoder", "none", "both"] = "both",#skipped
+        use_layer_norm: Literal["encoder", "decoder", "none", "both"] = "none",#skipped
+        extra_encoder_kwargs: dict | None = None,#skipped
+        extra_decoder_kwargs: dict | None = None,#skipped
     ):
         super().__init__()
     #end of How totalVI module looked like
     #notes of How totalVI module looked like vs model
-
+    #1- does it give the same required paraters
+    #in order as the module requires?
+    #2- are the parameters of model identical 
+    # to those of module? 
 
         
         self._model_summary_string = (
