@@ -243,7 +243,7 @@ class confirmationthattheseareenough(RNASeqMixin, VAEMixin, ArchesMixin, BaseMod
     #How is the data passed to module?
     #here is how the data passed to the module 
     #begging of get inference input
-
+    
     def _get_inference_input(self, tensors):
         x = tensors[REGISTRY_KEYS.X_KEY]
         y = tensors[REGISTRY_KEYS.PROTEIN_EXP_KEY]
@@ -269,6 +269,9 @@ class confirmationthattheseareenough(RNASeqMixin, VAEMixin, ArchesMixin, BaseMod
         #I suspect train? 
         #question2: if my module accesses the data directly 
         #from the registry I suspect no need to change? 
+        #Trial1: it seems to me that somehow this code
+    #ends up with data in #REGISTRY_KEYS.X_KEY 
+        
         self._model_summary_string = (
             f"TotalVI Model with the following params: \nn_latent: {n_latent}, "
             f"gene_dispersion: {gene_dispersion}, protein_dispersion: {protein_dispersion}, "
