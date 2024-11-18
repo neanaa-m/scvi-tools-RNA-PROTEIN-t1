@@ -102,8 +102,10 @@ class confirmationthattheseareenough(RNASeqMixin, VAEMixin, ArchesMixin, BaseMod
     """
 
     _module_cls = TOTALVAE
+    #load your module and make it here
     _data_splitter_cls = DataSplitter
     _training_plan_cls = AdversarialTrainingPlan
+    #make this just training plan
     _train_runner_cls = TrainRunner
 
     def __init__(
@@ -183,6 +185,7 @@ class confirmationthattheseareenough(RNASeqMixin, VAEMixin, ArchesMixin, BaseMod
             library_log_vars=library_log_vars,
             **model_kwargs,
         )
+        # how you instantiate your module? 
         self._model_summary_string = (
             f"TotalVI Model with the following params: \nn_latent: {n_latent}, "
             f"gene_dispersion: {gene_dispersion}, protein_dispersion: {protein_dispersion}, "
