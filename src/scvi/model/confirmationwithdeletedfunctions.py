@@ -241,8 +241,34 @@ class confirmationthattheseareenough(RNASeqMixin, VAEMixin, ArchesMixin, BaseMod
     #defaults.
     #2- the data seems to not passed to module here
     #How is the data passed to module?
+    #here is how the data passed to the module 
+    #begging of get inference input
 
-        
+    def _get_inference_input(self, tensors):
+        x = tensors[REGISTRY_KEYS.X_KEY]
+        y = tensors[REGISTRY_KEYS.PROTEIN_EXP_KEY]
+        batch_index = tensors[REGISTRY_KEYS.BATCH_KEY]
+
+        cont_key = REGISTRY_KEYS.CONT_COVS_KEY
+        cont_covs = tensors[cont_key] if cont_key in tensors.keys() else None
+
+        cat_key = REGISTRY_KEYS.CAT_COVS_KEY
+        cat_covs = tensors[cat_key] if cat_key in tensors.keys() else None
+
+        input_dict = {
+            "x": x,
+            "y": y,
+            "batch_index": batch_index,
+            "cat_covs": cat_covs,
+            "cont_covs": cont_covs,
+        }
+        return input_dict
+#end of get inference input
+        #question1: what does that? 
+        #REGISTRY_KEYS.X_KEY
+        #I suspect train? 
+        #question2: if my module accesses the data directly 
+        #from the registry I suspect no need to change? 
         self._model_summary_string = (
             f"TotalVI Model with the following params: \nn_latent: {n_latent}, "
             f"gene_dispersion: {gene_dispersion}, protein_dispersion: {protein_dispersion}, "
