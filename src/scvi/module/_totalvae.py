@@ -307,7 +307,8 @@ class TOTALVAE(BaseModuleClass):
             self.px_r = torch.nn.Parameter(torch.randn(n_input_genes, n_labels))
         else:  # gene-cell
             pass
-
+##########The py_r parameter is instantiated  under the block of code dealing with protein dispersion
+        # it depends on protein dispersion if its protein or protein-batch or protein labels specific 
         if self.protein_dispersion == "protein":
             self.py_r = torch.nn.Parameter(2 * torch.rand(self.n_input_proteins))
         elif self.protein_dispersion == "protein-batch":
