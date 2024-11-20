@@ -1,15 +1,38 @@
 #forawrd tghis code in the following order:
-class totalVI, function;__init__
-class totalVI, function;train 
-class totalVI, function;_validate_anndata 
-class totalVI, function;_get_totalvi_protein_priors
-class totalVI, function;setup_anndata
-class totalVI, function;setup_mudata 
-class TrainRunner, function;__init__ 
-class TrainRunner, function;__call__ 
-class TrainRunner, function;_update_history 
-class TOTALVAE, function;__init__
-class BaseModuleClass, function;device
+modelllll = withprintstatments(mdata)
+totalVImodel, class totalVI, function;__init__ 
+totalVImodel, class totalVI, function;_get_totalvi_protein_prior
+modelllll.train()
+totalVImodel, class totalVI, function;train 
+train  _trainingplans, class AdversarialTrainingPlan, function;__init__ 
+train  _trainingplans, class TrainingPlan, function;__init__ 
+train  _trainingplans, class TrainingPlan, function;_create_elbo_metric_components 
+train  _trainingplans, class TrainingPlan, function;_create_elbo_metric_components 
+train  _trainrunner, class TrainRunner, function;__init__ 
+train  _trainer, class Trainer, function;__init__ 
+train  _trainrunner, class TrainRunner, function;__call__ 
+train  _trainingplans, class TrainingPlan, function;_create_elbo_metric_components 
+train  _trainingplans, class TrainingPlan, function;_create_elbo_metric_components 
+train  _trainer, class Trainer, function;fit 
+######training starts#####
+module  base, class BaseModuleClass, function;forward 
+module  base, class BaseModuleClass, function;_generic_forward 
+#######VAE is run though by _generic_forward
+module  _totalvae, class TOTALVAE, function;_get_inference_input 
+module  _totalvae, class TOTALVAE, function;inference 
+module  _totalvae, class TOTALVAE, function;_get_generative_input 
+module  _totalvae, class TOTALVAE, function;generative 
+module  _totalvae, class TOTALVAE, function;loss 
+module  _totalvae, class TOTALVAE, function;get_reconstruction_loss 
+######then repeat############
+module  base, class LossOutput, function;__post_init__ 
+module  base, class BaseModuleClass, function;forward 
+module  base, class BaseModuleClass, function;_generic_forward 
+module  _totalvae, class TOTALVAE, function;_get_inference_input 
+module  _totalvae, class TOTALVAE, function;inference 
+module  _totalvae, class TOTALVAE, function;_get_generative_input 
+module  _totalvae, class TOTALVAE, function;generative 
+
 
 """Main module."""
 
