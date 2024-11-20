@@ -1,3 +1,16 @@
+#forawrd tghis code in the following order:
+class totalVI, function;__init__
+class totalVI, function;train 
+class totalVI, function;_validate_anndata 
+class totalVI, function;_get_totalvi_protein_priors
+class totalVI, function;setup_anndata
+class totalVI, function;setup_mudata 
+class TrainRunner, function;__init__ 
+class TrainRunner, function;__call__ 
+class TrainRunner, function;_update_history 
+class TOTALVAE, function;__init__
+class BaseModuleClass, function;device
+
 """Main module."""
 
 from collections.abc import Iterable
