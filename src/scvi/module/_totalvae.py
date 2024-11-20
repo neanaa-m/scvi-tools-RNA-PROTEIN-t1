@@ -30,15 +30,7 @@ module  base, class BaseModuleClass, function;forward
 module  base, class BaseModuleClass, function;_generic_forward 
 module  _totalvae, class TOTALVAE, function;_get_inference_input 
 module  _totalvae, class TOTALVAE, function;inference 
-def _generic_forward(
-    module,
-    tensors,
-    inference_kwargs,
-    generative_kwargs,
-    loss_kwargs,
-    get_inference_input_kwargs,
-    get_generative_input_kwargs,
-    compute_loss,
+def _generic_forward(module,tensors,inference_kwargs,generative_kwargs,loss_kwargs,get_inference_input_kwargs,get_generative_input_kwargs,compute_loss,
 ):
     """Core of the forward call shared by PyTorch- and Jax-based modules."""
     inference_kwargs = _get_dict_if_none(inference_kwargs)
