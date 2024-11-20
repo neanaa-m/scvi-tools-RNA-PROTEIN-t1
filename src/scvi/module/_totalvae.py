@@ -30,9 +30,34 @@ module  base, class BaseModuleClass, function;forward
 module  base, class BaseModuleClass, function;_generic_forward 
 module  _totalvae, class TOTALVAE, function;_get_inference_input 
 module  _totalvae, class TOTALVAE, function;inference 
-module  _totalvae, class TOTALVAE, function;_get_generative_input 
-module  _totalvae, class TOTALVAE, function;generative 
+def _generic_forward(
+    module,
+    tensors,
+    inference_kwargs,
+    generative_kwargs,
+    loss_kwargs,
+    get_inference_input_kwargs,
+    get_generative_input_kwargs,
+    compute_loss,
+):
+    """Core of the forward call shared by PyTorch- and Jax-based modules."""
+    inference_kwargs = _get_dict_if_none(inference_kwargs)
+    generative_kwargs = _get_dict_if_none(generative_kwargs)
+    loss_kwargs = _get_dict_if_none(loss_kwargs)
+    get_inference_input_kwargs = _get_dict_if_none(get_inference_input_kwargs)
+    get_generative_input_kwargs = _get_dict_if_none(get_generative_input_kwargs)
 
+    inference_inputs = module._get_inference_input(tensors, **get_inference_input_kwargs)
+    inference_outputs = module.inference(**inference_inputs, **inference_kwargs)
+    generative_inputs = module._get_generative_input(
+        tensors, inference_outputs, **get_generative_input_kwargs
+    )
+    generative_outputs = module.generative(**generative_inputs, **generative_kwargs)
+    if compute_loss:
+        losses = module.loss(tensors, inference_outputs, generative_outputs, **loss_kwargs)
+        return inference_outputs, generative_outputs, losses
+    else:
+        return inference_outputs, generative_outputs
 
 """Main module."""
 
