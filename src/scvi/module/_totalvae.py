@@ -50,6 +50,58 @@ def _generic_forward(module,tensors,inference_kwargs,generative_kwargs,loss_kwar
         return inference_outputs, generative_outputs, losses
     else:
         return inference_outputs, generative_outputs
+#### kets focus on this####
+inference_inputs = module._get_inference_input(tensors, **get_inference_input_kwargs)
+################
+ def _get_inference_input(self, tensors):
+x = tensors[REGISTRY_KEYS.X_KEY] y = tensors[REGISTRY_KEYS.PROTEIN_EXP_KEY]
+batch_index = tensors[REGISTRY_KEYS.BATCH_KEY] cont_key = REGISTRY_KEYS.CONT_COVS_KEY
+cont_covs = tensors[cont_key] if cont_key in tensors.keys() else None
+cat_key = REGISTRY_KEYS.CAT_COVS_KEY
+cat_covs = tensors[cat_key] if cat_key in tensors.keys() else None
+input_dict = {"x": x, "y": y, "batch_index": batch_index,"cat_covs": cat_covs,"cont_covs": cont_covs,}return input_dict
+inference_inputs = input_dict 
+#############
+inference_outputs = module.inference(**inference_inputs, **inference_kwargs)
+############
+def inference(self,x: torch.Tensor,y: torch.Tensor,batch_index: torch.Tensor | None = None,label: torch.Tensor | None = None,
+qz, ql, latent, untran_latent = self.encoder(encoder_input, batch_index, *categorical_input)
+self.encoder = EncoderTOTALVI(n_input_encoder, n_latent,n_layers=n_layers_encoder,n_cat_list=encoder_cat_list, n_hidden=n_hidden,dropout_rate=dropout_rate_encoder, distribution=latent_distribution,
+use_batch_norm=use_batch_norm_encoder,use_layer_norm=use_layer_norm_encoder,**_extra_encoder_kwargs,)
+z = latent["z"] untran_z = untran_latent["z"] untran_l = untran_latent["l"]  if not self.use_observed_lib_size: library_gene = latent["l"]
+return {"qz": qz,"z": z,"untran_z": untran_z, "ql": ql, "library_gene": library_gene,"untran_l": untran_l,}
+##########
+inference_outputs = return {"qz": qz,"z": z,"untran_z": untran_z, "ql": ql, "library_gene": library_gene,"untran_l": untran_l,}
+##########
+generative_inputs = module._get_generative_input(tensors, inference_outputs, **get_generative_input_kwargs)
+#########
+def _get_generative_input(self, tensors, inference_outputs): 
+z = inference_outputs["z"] library_gene = inference_outputs["library_gene"]
+batch_index = tensors[REGISTRY_KEYS.BATCH_KEY] label = tensors[REGISTRY_KEYS.LABELS_KEY]
+cont_key = REGISTRY_KEYS.CONT_COVS_KEY cont_covs = tensors[cont_key] if cont_key in tensors.keys() else None
+cat_key = REGISTRY_KEYS.CAT_COVS_KEY cat_covs = tensors[cat_key] if cat_key in tensors.keys() else None
+size_factor_key = REGISTRY_KEYS.SIZE_FACTOR_KEY size_factor = tensors[size_factor_key] if size_factor_key in tensors.keys() else None
+return {"z": z, "library_gene": library_gene,"batch_index": batch_index, "label": label, "cat_covs": cat_covs,
+        "cont_covs": cont_covs, "size_factor": size_factor,}
+##############
+generative_inputs = {"z": z, "library_gene": library_gene,"batch_index": batch_index, "label": label, "cat_covs": cat_covs,
+        "cont_covs": cont_covs, "size_factor": size_factor,}
+###############
+generative_outputs = module.generative(**generative_inputs, **generative_kwargs)
+#############
+def generative(self, z: torch.Tensor,library_gene: torch.Tensor, batch_index: torch.Tensor,
+label: torch.Tensor,cont_covs=None,cat_covs=None,size_factor=None, transform_batch: int | None = None,
+) -> dict[str, torch.Tensor | dict[str, torch.Tensor]]:
+decoder_input = z  px_, py_, log_pro_back_mean = self.decoder(decoder_input, size_factor, batch_index, *categorical_input)
+return {"px_": px_,"py_": py_,"log_pro_back_mean": log_pro_back_mean,}
+###############
+generative_outputs ={"px_": px_,"py_": py_,"log_pro_back_mean": log_pro_back_mean,}
+#############
+losses = module.loss(tensors, inference_outputs, generative_outputs, **loss_kwargs)
+#############
+
+
+    return inference_outputs, generative_outputs, losses
 
 """Main module."""
 
@@ -396,7 +448,14 @@ class TOTALVAE(BaseModuleClass):
             "cont_covs": cont_covs,
         }
         return input_dict
-
+    def _get_generative_input(self, tensors, inference_outputs): 
+    z = inference_outputs["z"] library_gene = inference_outputs["library_gene"]
+    batch_index = tensors[REGISTRY_KEYS.BATCH_KEY] label = tensors[REGISTRY_KEYS.LABELS_KEY]
+    cont_key = REGISTRY_KEYS.CONT_COVS_KEY cont_covs = tensors[cont_key] if cont_key in tensors.keys() else None
+    cat_key = REGISTRY_KEYS.CAT_COVS_KEY cat_covs = tensors[cat_key] if cat_key in tensors.keys() else None
+    size_factor_key = REGISTRY_KEYS.SIZE_FACTOR_KEY size_factor = tensors[size_factor_key] if size_factor_key in tensors.keys() else None
+    return {"z": z, "library_gene": library_gene,"batch_index": batch_index, "label": label, "cat_covs": cat_covs,
+            "cont_covs": cont_covs, "size_factor": size_factor,}
     def _get_generative_input(self, tensors, inference_outputs):
         z = inference_outputs["z"]
         library_gene = inference_outputs["library_gene"]
@@ -421,6 +480,11 @@ class TOTALVAE(BaseModuleClass):
             "cont_covs": cont_covs,
             "size_factor": size_factor,
         }
+  def generative(self, z: torch.Tensor,library_gene: torch.Tensor, batch_index: torch.Tensor,
+label: torch.Tensor,cont_covs=None,cat_covs=None,size_factor=None, transform_batch: int | None = None,
+    ) -> dict[str, torch.Tensor | dict[str, torch.Tensor]]:
+  decoder_input = z  px_, py_, log_pro_back_mean = self.decoder(decoder_input, size_factor, batch_index, *categorical_input)
+ return {"px_": px_,"py_": py_,"log_pro_back_mean": log_pro_back_mean,}
 
     @auto_move_data
     def generative(
@@ -486,6 +550,48 @@ class TOTALVAE(BaseModuleClass):
         }
 
     @auto_move_data
+def inference(self,x: torch.Tensor,y: torch.Tensor,batch_index: torch.Tensor | None = None,label: torch.Tensor | None = None,
+qz, ql, latent, untran_latent = self.encoder(encoder_input, batch_index, *categorical_input)
+self.encoder = EncoderTOTALVI(n_input_encoder, n_latent,n_layers=n_layers_encoder,n_cat_list=encoder_cat_list, n_hidden=n_hidden,dropout_rate=dropout_rate_encoder, distribution=latent_distribution,
+use_batch_norm=use_batch_norm_encoder,use_layer_norm=use_layer_norm_encoder,**_extra_encoder_kwargs,)
+z = latent["z"] untran_z = untran_latent["z"] untran_l = untran_latent["l"]  if not self.use_observed_lib_size: library_gene = latent["l"]
+return {"qz": qz,"z": z,"untran_z": untran_z, "ql": ql, "library_gene": library_gene,"untran_l": untran_l,}
+
+       def inference(self,x: torch.Tensor,y: torch.Tensor,batch_index: torch.Tensor | None = None,label: torch.Tensor | None = None,
+        n_samples=1,cont_covs=None,cat_covs=None,) -> dict[str, torch.Tensor | dict[str, torch.Tensor]]:
+  x_ = x y_ = y if self.use_observed_lib_size:library_gene = x.sum(1).unsqueeze(1) if self.log_variational:
+            x_ = torch.log(1 + x_)
+            y_ = torch.log(1 + y_)
+ if cont_covs is not None and self.encode_covariates is True:encoder_input = torch.cat((x_, y_, cont_covs), dim=-1)
+ else: encoder_input = torch.cat((x_, y_), dim=-1) if cat_covs is not None and self.encode_covariates is True: categorical_input = torch.split(cat_covs, 1, dim=1)else:
+categorical_input = () 
+qz, ql, latent, untran_latent = self.encoder(encoder_input, batch_index, *categorical_input)
+self.encoder = EncoderTOTALVI(n_input_encoder, n_latent,n_layers=n_layers_encoder,n_cat_list=encoder_cat_list, n_hidden=n_hidden,dropout_rate=dropout_rate_encoder, distribution=latent_distribution,
+use_batch_norm=use_batch_norm_encoder,use_layer_norm=use_layer_norm_encoder,**_extra_encoder_kwargs,)
+z = latent["z"] untran_z = untran_latent["z"] untran_l = untran_latent["l"]  if not self.use_observed_lib_size: library_gene = latent["l"]
+if n_samples > 1: untran_z = qz.sample((n_samples,)) z = self.encoder.z_transformation(untran_z)    untran_l = ql.sample((n_samples,))
+if self.use_observed_lib_size: library_gene = library_gene.unsqueeze(0).expand(  (n_samples, library_gene.size(0), library_gene.size(1)) )
+    else:  library_gene = self.encoder.l_transformation(untran_l)
+  # Background regularization
+if self.gene_dispersion == "gene-label":
+    # px_r gets transposed - last dimension is nb genes
+px_r = F.linear(one_hot(label.squeeze(-1), self.n_labels).float(), self.px_r)
+elif self.gene_dispersion == "gene-batch": px_r = F.linear(one_hot(batch_index.squeeze(-1), self.n_batch).float(), self.px_r)  elif self.gene_dispersion == "gene":
+px_r = self.px_r px_r = torch.exp(px_r)
+if self.protein_dispersion == "protein-label":
+            # py_r gets transposed - last dimension is n_proteins
+ py_r = F.linear(one_hot(label.squeeze(-1), self.n_labels).float(), self.py_r)  elif self.protein_dispersion == "protein-batch":
+ py_r = F.linear(one_hot(batch_index.squeeze(-1), self.n_batch).float(), self.py_r)
+ elif self.protein_dispersion == "protein":   py_r = self.py_r    py_r = torch.exp(py_r)
+if self.n_batch > 0:    py_back_alpha_prior = F.linear(        one_hot(batch_index.squeeze(-1), self.n_batch).float(), self.background_pro_alpha )
+py_back_beta_prior = F.linear(one_hot(batch_index.squeeze(-1), self.n_batch).float(),torch.exp(self.background_pro_log_beta),)
+else:py_back_alpha_prior = self.background_pro_alpha py_back_beta_prior = torch.exp(self.background_pro_log_beta)
+self.back_mean_prior = Normal(py_back_alpha_prior, py_back_beta_prior)
+return {"qz": qz,"z": z,"untran_z": untran_z, "ql": ql, "library_gene": library_gene,"untran_l": untran_l,}
+
+
+
+        
     def inference(
         self,
         x: torch.Tensor,
@@ -607,6 +713,10 @@ class TOTALVAE(BaseModuleClass):
             "library_gene": library_gene,
             "untran_l": untran_l,
         }
+ def loss( self, tensors, inference_outputs, generative_outputs,pro_recons_weight=1.0,  kl_weight=1.0,
+    ) -> tuple[torch.FloatTensor, torch.FloatTensor, torch.FloatTensor, torch.FloatTensor]:
+ reconst_loss_gene, reconst_loss_protein = self.get_reconstruction_loss(x, y, px_, py_, pro_batch_mask_minibatch)
+return LossOutput(loss=loss, reconstruction_loss=reconst_losses, kl_local=kl_local)
 
     def loss(
         self,
